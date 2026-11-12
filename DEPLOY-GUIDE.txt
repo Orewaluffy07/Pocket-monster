@@ -1,0 +1,50 @@
+POCKET ARENA - DEPLOY GUIDE (free, 24/7 link)
+=============================================
+
+You need 2 free accounts: github.com and render.com (both FREE, no credit card).
+
+STEP 1 - UNZIP
+  Unzip this file. You get a folder called "pocket-arena".
+
+STEP 2 - PUT THE CODE ON GITHUB (5 min, no git knowledge needed)
+  1. Go to https://github.com -> Sign up (free) -> verify email
+  2. Click the "+" icon (top-right) -> "New repository"
+  3. Repository name: pocket-arena
+     - Select "Public"
+     - DO NOT tick any of the "Add a README" checkboxes
+     -> Click "Create repository"
+  3. On the empty repo page, click "Add file" -> "Upload files"
+  4. Open your unzipped "pocket-arena" folder, SELECT ALL FILES inside it
+     (Ctrl+A / Cmd+A) and drag them onto the GitHub page
+     (drag the FILES, not the .zip itself)
+  5. Scroll down -> click "Commit changes"
+     Wait for the upload to finish.
+
+STEP 3 - HOST IT FREE ON RENDER (2 min)
+  1. Go to https://render.com -> Sign up (free, "Sign up with GitHub" is easiest)
+  2. Click "New" -> "Web Service"
+  3. Connect/select your "pocket-arena" repository
+  4. Fill in:
+       Name:               pocket-arena
+       Runtime:            Node
+       Build Command:      npm install
+       Start Command:      npm start
+       (Instance type:    Free - should be preselected)
+  5. Click "Create Web Service"
+  6. Wait ~2 minutes for the build (you'll see build logs)
+  7. Done! You get a permanent link like:
+       https://pocket-arena-xxxx.onrender.com
+     SHARE THAT LINK WITH YOUR FRIENDS - it stays up as long as
+     the Render free plan has hours left this month (750 hrs free).
+
+STEP 4 - PLAY
+  Friends open the link -> Register -> get free 7-card pack -> Battle!
+
+NOTES
+ - Free Render sleeps after ~15 min with nobody visiting. First open
+   takes 30-60 seconds to wake, then it's fine. While people are
+   playing it stays awake.
+ - Accounts/cards are saved in data.json. They persist while the
+   service runs, but reset if you redeploy code (fine for class use).
+ - To update code later: just re-upload changed files on GitHub ->
+   Render redeploys automatically.

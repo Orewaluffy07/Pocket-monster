@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Arena — Class Card Battles</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ==================== AUTH ==================== -->
+    <section id="screen-auth" class="screen">
+      <div class="auth-card">
+        <div class="logo">
+          <span class="logo-ball">⚡</span>
+          <h1>POCKET<span>ARENA</span></h1>
+        </div>
+        <p class="tagline">Open packs · Build your dex · Battle your classmates</p>
+        <div class="auth-tabs">
+          <button id="tab-login" class="active">Login</button>
+          <button id="tab-register">Register</button>
+        </div>
+        <form id="auth-form" autocomplete="off">
+          <input id="auth-user" placeholder="username (3-16, a-z 0-9 _)" maxlength="16" required />
+          <input id="auth-pass" type="password" placeholder="password (min 4 chars)" required />
+          <div id="auth-err" class="form-err"></div>
+          <button type="submit" id="auth-go">Enter the Arena</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== MAIN APP ==================== -->
+    <section id="screen-main" class="screen" hidden>
+      <header id="topbar">
+        <div class="logo small"><span class="logo-ball">⚡</span><b>POCKET<span>ARENA</span></b></div>
+        <nav id="nav">
+          <button data-view="battle" class="active">⚔️ Battle</button>
+          <button data-view="collection">🃏 Collection</button>
+          <button data-view="shop">🛒 Shop</button>
+          <button data-view="friends">👥 Friends</button>
+        </nav>
+        <div id="who">
+          <span id="coin-pill">💰 <b id="coin-n">0</b></span>
+          <span id="topbar-user"></span>
+        </div>
+      </header>
+
+      <main id="views">
+        <!-- BATTLE LOBBY -->
+        <div id="view-battle" class="view">
+          <div class="panel create-room">
+            <h2>⚔️ Battle</h2>
+            <p class="muted">Pick your team size — create a room for a classmate, or fight the bot!</p>
+            <div class="row">
+              <input id="room-name" placeholder="room name (optional)" maxlength="24" />
+            </div>
+            <div class="row" style="margin-top:10px">
+              <div class="mode-pick" id="mode-pick">
+                <button data-mode="1" class="active">1v1</button>
+                <button data-mode="3">3v3</button>
+                <button data-mode="5">5v5</button>
+              </div>
+              <button id="btn-create-room" class="primary">Create Room</button>
+              <button id="btn-fight-bot" class="primary bot">🤖 Fight Bot</button>
+            </div>
+            <p class="muted small" style="margin-top:10px">🤖 bot rewards: 1v1 = practice (0 coins) · 3v3 &amp; 5v5 win = 5 coins · losing to bot = 0</p>
+          </div>
+          <div class="panel">
+            <div class="row space">
+              <h2>Open Rooms</h2>
+              <button id="btn-refresh-rooms" class="ghost">↻ Refresh</button>
+            </div>
+            <div id="room-list" class="room-list"></div>
+          </div>
+        </div>
+
+        <!-- COLLECTION -->
+        <div id="view-collection" class="view" hidden>
+          <div class="row space">
+            <h2>🃏 Your Collection <span id="col-count" class="muted"></span></h2>
+            <div id="col-filters" class="filters"></div>
+          </div>
+          <div id="collection" class="card-grid"></div>
+        </div>
+
+        <!-- SHOP -->
+        <div id="view-shop" class="view" hidden>
+          <h2>🛒 Shop</h2>
+          <div class="shop-grid">
+            <div class="panel pack-offer starter" id="starter-pack">
+              <div class="pack-art">🎁</div>
+              <h3>Starter Pack</h3>
+              <p><b>7 cards</b> — free, once for every new player</p>
+              <button id="btn-starter" class="primary">Open Free Pack</button>
+            </div>
+            <div class="panel pack-offer">
+              <div class="pack-art">📦</div>
+              <h3>Booster Pack</h3>
+              <p><b>8 cards</b> — any rarity</p>
+              <button id="btn-buy-pack" class="primary">Buy — 250 💰</button>
+            </div>
+          </div>
+          <div class="panel odds">
+            <h3>Pack odds <span class="muted">(per card)</span></h3>
+            <div class="odds-row" id="odds-row"></div>
+            <p class="muted small">L tier is super rare — 1% per card!</p>
+          </div>
+        </div>
+
+        <!-- FRIENDS -->
+        <div id="view-friends" class="view" hidden>
+          <h2>👥 Friends</h2>
+          <div class="panel">
+            <h3>Find a player</h3>
+            <div class="row">
+              <input id="friend-search" placeholder="search by username…" maxlength="16" />
+              <button id="btn-friend-search" class="primary">Search</button>
+            </div>
+            <div id="search-results" class="list"></div>
+          </div>
+          <div class="panel" id="incoming-panel" hidden>
+            <h3>Friend requests</h3>
+            <div id="incoming-list" class="list"></div>
+          </div>
+          <div class="panel">
+            <h3>Your friends</h3>
+            <div id="friend-list" class="list"></div>
+          </div>
+        </div>
+
+        <!-- TRADE -->
+        <div id="view-trade" class="view" hidden>
+          <div class="row space">
+            <h2>🤝 Trade</h2>
+            <button id="btn-trade-leave" class="ghost">✕ Leave trade</button>
+          </div>
+          <div id="trade-status" class="trade-status"></div>
+          <div class="trade-cols">
+            <div class="panel">
+              <h3>You give <span class="muted small">(click cards)</span></h3>
+              <div id="trade-mine" class="mini-grid"></div>
+            </div>
+            <div class="panel">
+              <h3>You get</h3>
+              <div id="trade-theirs" class="mini-grid"></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Your collection</h3>
+            <div id="trade-picker" class="mini-grid pickable"></div>
+            <div class="row" style="margin-top:12px">
+              <button id="btn-trade-confirm" class="primary">✓ Confirm trade</button>
+              <span id="trade-ok-hint" class="muted"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROOM / BATTLE -->
+        <div id="view-room" class="view" hidden>
+          <div class="row space">
+            <h2 id="room-title">Room</h2>
+            <div class="row">
+              <button id="btn-room-leave" class="ghost">← Leave</button>
+            </div>
+          </div>
+
+          <!-- waiting / picking -->
+          <div id="phase-pick">
+            <div id="pick-status" class="panel status-panel"></div>
+            <div class="panel">
+              <h3>Choose your fighter</h3>
+              <div id="pick-grid" class="mini-grid pickable"></div>
+              <div id="pick-chosen" class="pick-chosen" hidden></div>
+            </div>
+          </div>
+
+          <!-- battle -->
+          <div id="phase-battle" hidden>
+            <div id="arena">
+              <div class="fighter" id="fig-opp">
+                <div class="fig-card" id="opp-card"></div>
+                <div class="fig-side">
+                  <div class="fig-name" id="opp-name"></div>
+                  <div class="hpbar"><div class="hp-fill" id="opp-hp"></div><span class="hp-num" id="opp-hpnum"></span></div>
+                  <div class="fig-buffs" id="opp-buffs"></div>
+                  <div class="team-strip" id="opp-team"></div>
+                  <div class="fig-cds" id="opp-cds"></div>
+                </div>
+              </div>
+
+              <div id="turn-banner"></div>
+              <div id="battle-log"></div>
+
+              <div class="fighter me" id="fig-me">
+                <div class="fig-card" id="me-card"></div>
+                <div class="fig-side">
+                  <div class="fig-name" id="me-name"></div>
+                  <div class="hpbar"><div class="hp-fill" id="me-hp"></div><span class="hp-num" id="me-hpnum"></span></div>
+                  <div class="fig-buffs" id="me-buffs"></div>
+                  <div class="team-strip" id="me-team"></div>
+                </div>
+              </div>
+
+              <div id="ability-bar"></div>
+            </div>
+            <div id="battle-end" class="overlay" hidden></div>
+          </div>
+
+          <!-- chat -->
+          <div class="panel chat-panel">
+            <div id="battle-tools"><button class="ghost" id="btn-surrender" hidden title="Concede the battle">🏳️ Surrender</button></div>
+            <div id="chat-log"></div>
+            <form id="chat-form" class="row">
+              <input id="chat-input" placeholder="chat…" maxlength="160" autocomplete="off" />
+              <button class="primary" type="submit">Send</button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- ==================== PACK OVERLAY ==================== -->
+    <div id="pack-overlay" class="overlay" hidden>
+      <div class="pack-box">
+        <h2 id="pack-title">You opened a pack!</h2>
+        <div id="pack-cards" class="pack-cards"></div>
+        <div class="row center">
+          <button id="pack-flipall" class="ghost">Flip all</button>
+          <button id="pack-done" class="primary" disabled>Collect</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== CARD DETAIL MODAL ==================== -->
+    <div id="card-modal" class="overlay" hidden>
+      <div id="card-modal-body" class="modal-card"></div>
+    </div>
+
+    <div id="toasts"></div>
+    <div id="conn-banner" hidden>⚠️ Connection lost — reconnecting…</div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

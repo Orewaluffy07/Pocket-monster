@@ -1,0 +1,21 @@
+{
+  "name": "pocket-arena",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js",
+    "test:ui": "node ui-test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Multiplayer class card battler",
+  "dependencies": {
+    "express": "^5.3.0",
+    "ws": "^8.22.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
+  }
+}
